@@ -1,0 +1,64 @@
+// Taille pilotée par le parent via --card-size.
+:host {
+  --size: var(--card-size, 96px);
+  position: relative;
+  display: block;
+  width: var(--size);
+  height: var(--size);
+  flex: none;
+}
+
+:host(.hidden) { visibility: hidden; }
+:host(.active) .face {
+  outline: max(4px, calc(var(--size) * 0.045)) solid #fff;
+  outline-offset: calc(var(--size) * 0.04);
+}
+
+.face {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 18%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0.4vmin 2vmin rgb(0 0 0 / 45%);
+}
+
+:host(.hand-L) .face { background: var(--left); }
+:host(.hand-R) .face { background: var(--right); }
+:host(.dodge) .face {
+  background: var(--dodge);
+  border-radius: 50%;
+  --icon: #1b1b1b;
+}
+
+// Tête = entièrement au-dessus de la ligne, corps = entièrement en dessous, esquive = centrée dessus.
+:host(.target-head) { transform: translateY(-62%); }
+:host(.target-body) { transform: translateY(62%); }
+
+.icon {
+  width: 78%;
+  height: 78%;
+  fill: none;
+  stroke: var(--icon, #fff);
+  stroke-width: 10;
+  stroke-linecap: round;
+  overflow: visible;
+
+  &.mirror { transform: scaleX(-1); }
+
+  .head {
+    fill: var(--icon, #fff);
+    stroke: none;
+  }
+}
+
+.num {
+  position: absolute;
+  top: 5%;
+  left: 8%;
+  font-size: calc(var(--size) * 0.2);
+  font-weight: 800;
+  color: rgb(255 255 255 / 85%);
+  line-height: 1;
+}

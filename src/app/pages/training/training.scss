@@ -1,0 +1,196 @@
+:host {
+  display: block;
+  height: 100dvh;
+  background: #000;
+  overflow: hidden;
+  user-select: none;
+}
+
+.ready {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
+
+  .back { flex: none; }
+}
+
+.start {
+  flex: 1;
+  appearance: none;
+  border: 3px dashed var(--surface-2);
+  border-radius: 24px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+
+  .title { font-size: 1.4rem; font-weight: 800; }
+  .go { font-size: clamp(1.4rem, 6vw, 2.4rem); font-weight: 900; color: var(--accent); letter-spacing: 1px; }
+}
+
+.error { color: var(--left); margin: 0; text-align: center; }
+
+.screen {
+  position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.hud {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  font-variant-numeric: tabular-nums;
+
+  .round { color: var(--muted); font-weight: 700; }
+  .clock {
+    flex: 1;
+    text-align: center;
+    font-size: clamp(1.6rem, 7vmin, 3rem);
+    font-weight: 800;
+    &.warn { color: var(--accent); }
+  }
+  .hits {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+    font-size: 1.2rem;
+  }
+}
+
+.hit-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: hit 0.35s ease-out forwards;
+}
+
+@keyframes hit {
+  from { transform: scale(1.8); opacity: 1; }
+  to { transform: scale(1); opacity: 0.35; }
+}
+
+.hud-btn {
+  appearance: none;
+  border: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.stage {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.phase-label {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: clamp(1rem, 4vmin, 1.6rem);
+}
+
+.count {
+  font-size: clamp(5rem, 30vmin, 14rem);
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+
+  &.rest { font-size: clamp(3.5rem, 20vmin, 9rem); color: var(--muted); }
+}
+
+// Taille d'une carte : la plus grande qui tient sur une ligne et en hauteur
+// (la hauteur doit absorber le décalage tête/corps de part et d'autre de la ligne ≈ 2,3× la carte).
+.combo {
+  --gap: 2.5vmin;
+  --card-size: min(
+    calc((100vw - 48px - (var(--n) - 1) * var(--gap)) / var(--n)),
+    31dvh,
+    220px
+  );
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--gap);
+  padding: 0 24px;
+}
+
+.progress {
+  height: 10px;
+  margin: 0 12px 10px;
+  border-radius: 5px;
+  background: var(--surface);
+  overflow: hidden;
+
+  .bar {
+    height: 100%;
+    background: var(--accent);
+    transform-origin: left;
+  }
+}
+
+.pause-overlay {
+  position: absolute;
+  inset: 0;
+  appearance: none;
+  border: 0;
+  background: rgb(0 0 0 / 82%);
+  color: var(--text);
+  font: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+
+  .count { font-size: clamp(3rem, 16vmin, 7rem); }
+}
+
+// Flash vert : enchaînement réussi à temps. Flash rouge : décompte écoulé.
+.flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1.5vmin var(--right);
+  background: rgb(34 179 94 / 25%);
+  animation: flash-out 0.45s ease-out forwards;
+
+  &.fail {
+    box-shadow: inset 0 0 0 1.5vmin var(--left);
+    background: rgb(229 56 59 / 25%);
+  }
+}
+
+@keyframes flash-out {
+  to { opacity: 0; }
+}

@@ -1,0 +1,48 @@
+.stars.big {
+  font-size: 4rem;
+  text-align: center;
+  letter-spacing: 8px;
+}
+
+.validated {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 2px solid var(--accent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stat {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  strong { font-size: 1.6rem; }
+  span { color: var(--muted); font-size: 0.8rem; text-align: center; }
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  strong { font-size: 3rem; color: var(--accent); line-height: 1; }
+}
+
+.chart-title { font-size: 1rem; margin-bottom: 8px; }

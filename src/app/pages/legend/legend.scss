@@ -1,0 +1,51 @@
+.rules p {
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  &.left { background: var(--left); }
+  &.right { background: var(--right); }
+  &.dodge { background: var(--dodge); border-radius: 50%; }
+  &.line { flex: none; height: 4px; border-radius: 2px; background: rgb(255 255 255 / 35%); }
+}
+
+.grid {
+  --card-size: 76px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 4px 0 12px;
+}
+
+.slot {
+  width: 100%;
+  height: calc(var(--card-size) * 2.4);
+  display: grid;
+  place-items: center;
+}
+
+// Coups (tous à la tête) : la moitié basse sous la ligne est vide, la légende remonte dessus.
+.strikes .slot { margin-bottom: calc(var(--card-size) * -0.85); }
+// Esquives : centrées sur la ligne, pas besoin de réserver le haut et le bas.
+.dodges .slot { height: calc(var(--card-size) * 1.5); }
+
+figcaption {
+  font-size: 0.85rem;
+  text-align: center;
+}

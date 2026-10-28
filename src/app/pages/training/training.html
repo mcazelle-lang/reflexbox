@@ -1,0 +1,92 @@
+@if (engine.phase() === 'idle') {
+  <div class="ready">
+    <a class="back" routerLink="/" aria-label="Retour">←</a>
+    <button class="start" (click)="begin()" [disabled]="starting()">
+      <span class="title">{{ title }}</span>
+      @if (config; as c) {
+        <span class="muted">
+          {{ c.roundSec }} s · {{ c.strikesPerMin }} coups/min · {{ c.execSec }} s d'exécution · {{ c.minMoves }}–{{ c.maxMoves }} mouvements
+        </span>
+      }
+      <span class="go">{{ starting() ? '…' : 'TOUCHER POUR COMMENCER' }}</span>
+      <span class="muted small">Posez le téléphone en paysage, à hauteur des yeux, près du sac.</span>
+      @if (prefs().mic) {
+        <span class="muted small">🎙 Micro activé : les impacts seront comptés.</span>
+      }
+    </button>
+    @if (detector.error(); as err) {
+      <p class="error">{{ err }} La séance continue sans comptage.</p>
+    }
+  </div>
+} @else {
+  <div class="screen" [attr.data-phase]="engine.phase()">
+    <header class="hud">
+      <button class="hud-btn" (click)="quit()" aria-label="Quitter">✕</button>
+      <span class="clock" [class.warn]="lastSeconds()">{{ clock() }}</span>
+      @if (useMic()) {
+        <span class="hits">
+          @for (k of [detector.lastImpact()]; track k) {
+            <span class="hit-dot"></span>
+          }
+          {{ engine.hits() }}
+        </span>
+      }
+      <button class="hud-btn" (click)="engine.togglePause()" aria-label="Pause">
+        {{ engine.paused() ? '▶' : '❚❚' }}
+      </button>
+    </header>
+
+    <main class="stage">
+      @switch (engine.phase()) {
+        @case ('countdown') {
+          <div class="center">
+            <span class="phase-label">Round {{ engine.round() }}</span>
+            @for (n of [countdown()]; track n) {
+              <span class="count">{{ n }}</span>
+            }
+          </div>
+        }
+        @case ('rest') {
+          <div class="center">
+            <span class="phase-label">Repos</span>
+            <span class="count rest">{{ clock() }}</span>
+            <span class="muted">Prochain : round {{ engine.round() }}</span>
+          </div>
+        }
+        @case ('work') {
+          @if (engine.combo(); as combo) {
+            <div class="combo horizon" [style.--n]="combo.length">
+              @for (move of combo; track $index) {
+                <app-move-card
+                  [move]="move"
+                  [stance]="prefs().stance"
+                  [showNumber]="prefs().showNumbers"
+                  [state]="cardState($index)"
+                />
+              }
+            </div>
+          }
+        }
+      }
+    </main>
+
+    @for (f of [engine.flash()]; track f?.id) {
+      @if (f) {
+        <div class="flash" [class.fail]="f.kind === 'fail'" aria-hidden="true"></div>
+      }
+    }
+
+    <footer class="progress">
+      @if (engine.phase() === 'work' && engine.combo()) {
+        <div class="bar" [style.transform]="'scaleX(' + (1 - engine.comboProgress()) + ')'"></div>
+      }
+    </footer>
+
+    @if (engine.paused()) {
+      <button class="pause-overlay" (click)="engine.togglePause()">
+        <span class="count">PAUSE</span>
+        <span class="muted">Toucher pour reprendre</span>
+      </button>
+    }
+  </div>
+}

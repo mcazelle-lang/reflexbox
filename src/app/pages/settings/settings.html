@@ -1,0 +1,79 @@
+@let p = prefs();
+<div class="page">
+  <header class="topbar">
+    <a class="back" routerLink="/" aria-label="Retour">←</a>
+    <h1>Réglages</h1>
+  </header>
+
+  <section class="card field">
+    <span class="label">Garde</span>
+    <div class="chips">
+      <button class="chip" [class.on]="p.stance === 'orthodox'" (click)="setStance('orthodox')">Orthodoxe (gauche devant)</button>
+      <button class="chip" [class.on]="p.stance === 'southpaw'" (click)="setStance('southpaw')">Fausse garde (droite devant)</button>
+    </div>
+  </section>
+
+  <section class="card field">
+    <span class="label">Affichage des enchaînements</span>
+    <div class="chips">
+      <button class="chip" [class.on]="p.reveal === 'progressive'" (click)="setReveal('progressive')">Coup par coup</button>
+      <button class="chip" [class.on]="p.reveal === 'highlight'" (click)="setReveal('highlight')">Séquence + surlignage</button>
+    </div>
+    <span class="muted small">
+      @if (p.reveal === 'progressive') {
+        Chaque icône apparaît sur son bip : impossible d'anticiper.
+      } @else {
+        Toute la séquence s'affiche d'un coup ; le coup du bip en cours est entouré.
+      }
+    </span>
+  </section>
+
+  <section class="card">
+    <label class="toggle-row">
+      <span>Bips<br /><span class="muted small">Un bip par mouvement : grave = gauche, aigu = droite, sourd = esquive</span></span>
+      <input type="checkbox" [checked]="p.sounds" (change)="toggle('sounds')" />
+    </label>
+    <label class="toggle-row">
+      <span>Annonce vocale à la place des bips<br /><span class="muted small">« 1 », « 2 », « 3 corps »… masque le micro pendant qu'elle parle</span></span>
+      <input type="checkbox" [checked]="p.voice" (change)="toggle('voice')" />
+    </label>
+    <label class="toggle-row">
+      <span>Numéros sur les cartes<br /><span class="muted small">1 jab · 2 direct · 3/4 crochets · 5/6 uppercuts</span></span>
+      <input type="checkbox" [checked]="p.showNumbers" (change)="toggle('showNumbers')" />
+    </label>
+  </section>
+
+  <section class="card field">
+    <label class="toggle-row">
+      <span><strong>Compter les impacts au micro</strong><br /><span class="muted small">Précision, temps de réaction et étoiles bonus</span></span>
+      <input type="checkbox" [checked]="p.mic" (change)="toggle('mic')" />
+    </label>
+
+    <span class="label">Sensibilité <strong>{{ (p.micSensitivity * 100).toFixed(0) }} %</strong></span>
+    <input type="range" min="0" max="1" step="0.05" [value]="p.micSensitivity" (input)="setSensitivity($event)" />
+
+    <div class="meter">
+      <div class="level" [style.width.%]="detector.level() * 100"></div>
+      <div class="threshold" [style.left.%]="detector.threshold() * 100"></div>
+    </div>
+
+    <div class="test">
+      <button class="btn" (click)="toggleTest()">{{ detector.active() ? '■ Arrêter le test' : '🎙 Tester au sac' }}</button>
+      @if (detector.active()) {
+        <span class="hits">
+          @for (k of [detector.lastImpact()]; track k) {
+            <span class="flash"></span>
+          }
+          {{ testHits() }} impacts
+        </span>
+      }
+    </div>
+    @if (detector.error(); as err) {
+      <p class="error">{{ err }}</p>
+    }
+    <p class="muted small">
+      Frappez le sac : chaque coup doit faire passer la barre au-delà du trait blanc une seule fois.
+      Si des bruits ambiants sont comptés, baissez la sensibilité. Si des coups sont ratés, montez-la.
+    </p>
+  </section>
+</div>

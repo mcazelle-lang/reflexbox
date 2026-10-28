@@ -1,0 +1,68 @@
+@let c = cfg();
+<div class="page">
+  <header class="topbar">
+    <a class="back" routerLink="/" aria-label="Retour">←</a>
+    <h1>Séance libre</h1>
+  </header>
+
+  <section class="card field">
+    <span class="label">Temps d'exécution <strong>{{ c.execSec.toFixed(1) }} s</strong></span>
+    <input type="range" min="0.5" max="5" step="0.5" [value]="c.execSec" (input)="set('execSec', num($event))" />
+    <span class="muted small">Une icône toutes les 0,2 s, puis ce temps pour exécuter l'enchaînement</span>
+
+    <span class="label">Volume de frappe <strong>{{ c.strikesPerMin }} coups/min</strong></span>
+    <input type="range" min="10" max="150" step="2" [value]="c.strikesPerMin" (input)="set('strikesPerMin', num($event))" />
+    <span class="muted small">≈ {{ total() }} mouvements sur la séance · pause moyenne {{ meanPauseSec() }} s entre enchaînements</span>
+  </section>
+
+  <section class="card field">
+    <span class="label">Durée de l'exercice <strong>{{ formatDuration(c.roundSec) }}</strong></span>
+    <input type="range" min="10" max="180" step="5" [value]="c.roundSec" (input)="set('roundSec', num($event))" />
+
+
+  </section>
+
+  <section class="card field">
+    <span class="label">Mouvements par enchaînement <strong>{{ c.minMoves }} à {{ c.maxMoves }}</strong></span>
+    <span class="muted small">Minimum</span>
+    <input type="range" min="1" max="5" step="1" [value]="c.minMoves" (input)="set('minMoves', num($event))" />
+    <span class="muted small">Maximum</span>
+    <input type="range" min="1" max="5" step="1" [value]="c.maxMoves" (input)="set('maxMoves', num($event))" />
+  </section>
+
+  <section class="card field">
+    <span class="label">Aléatoire du timing <strong>{{ pct(c.timingRandomness) }} %</strong></span>
+    <input type="range" min="0" max="1" step="0.05" [value]="c.timingRandomness" (input)="set('timingRandomness', num($event))" />
+    <span class="muted small">
+      @if (c.timingRandomness === 0) {
+        Rythme régulier, pause fixe entre les enchaînements.
+      } @else {
+        Pause imprévisible de {{ pauseRangeSec()[0] }} à {{ pauseRangeSec()[1] }} s entre les enchaînements.
+      }
+    </span>
+
+    <span class="label">Variété des enchaînements <strong>{{ pct(c.comboRandomness) }} %</strong></span>
+    <input type="range" min="0" max="1" step="0.05" [value]="c.comboRandomness" (input)="set('comboRandomness', num($event))" />
+    <span class="muted small">
+      0 % = enchaînements classiques (1-2, 1-2-3, 1-6-3-2…) · 100 % = combinaisons totalement libres.
+    </span>
+  </section>
+
+  <section class="card field">
+    <span class="label">Coups</span>
+    <div class="chips">
+      @for (k of strikeKinds; track k[0]) {
+        <button class="chip" [class.on]="c.strikes.includes(k[0])" (click)="toggleStrike(k[0])">{{ k[1] }}</button>
+      }
+      <button class="chip" [class.on]="c.body" (click)="set('body', !c.body)">Au corps</button>
+    </div>
+    <span class="label">Esquives</span>
+    <div class="chips">
+      @for (k of dodgeKinds; track k[0]) {
+        <button class="chip" [class.on]="c.dodges.includes(k[0])" (click)="toggleDodge(k[0])">{{ k[1] }}</button>
+      }
+    </div>
+  </section>
+
+  <button class="btn primary big" [disabled]="!valid()" (click)="start()">▶ Démarrer</button>
+</div>

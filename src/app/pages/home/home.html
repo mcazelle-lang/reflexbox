@@ -1,0 +1,74 @@
+<div class="page">
+  <header class="brand">
+    <h1>REFLEX<span>BOXE</span></h1>
+    <a class="back" routerLink="/reglages" aria-label="Réglages">⚙</a>
+  </header>
+
+  <div class="demo horizon" aria-hidden="true">
+    @for (move of demo; track $index) {
+      <app-move-card [move]="move" />
+    }
+  </div>
+
+  @let lvl = current();
+  <section class="card hero">
+    <div class="hero-head">
+      <span class="badge">Niv. {{ lvl.level }}</span>
+      <div>
+        <h2>{{ lvl.name }}</h2>
+        <p class="muted small">{{ lvl.goal }}</p>
+      </div>
+    </div>
+    <p class="muted small">
+      {{ formatDuration(lvl.config.roundSec) }} · {{ lvl.config.strikesPerMin }} coups/min · {{ lvl.config.execSec }} s d'exécution ·
+      {{ lvl.config.minMoves }}–{{ lvl.config.maxMoves }} mouvements
+    </p>
+    <div class="stars">
+      @for (on of starRow(lvl.level); track $index) {
+        <span [class.off]="!on">★</span>
+      }
+      <span class="muted small">&nbsp;{{ starsToValidate }} étoiles pour valider le niveau</span>
+    </div>
+    <button class="btn primary big" (click)="play(lvl.level)">▶ S'entraîner</button>
+  </section>
+
+  <div class="actions">
+    <a class="btn" routerLink="/libre">Séance libre</a>
+    <a class="btn" routerLink="/legende">Légende</a>
+  </div>
+
+  @let s = progress.stats();
+  <section class="stats">
+    <div class="stat"><strong>{{ s.sessions }}</strong><span>séances</span></div>
+    <div class="stat"><strong>{{ s.strikes }}</strong><span>coups</span></div>
+    <div class="stat"><strong>{{ progress.streakDays() }}</strong><span>jours d'affilée</span></div>
+    <div class="stat">
+      <strong>{{ s.accuracy === null ? '—' : (s.accuracy * 100 | number: '1.0-0') + '%' }}</strong>
+      <span>précision</span>
+    </div>
+    <div class="stat">
+      <strong>{{ s.reactionMs === null ? '—' : (s.reactionMs | number: '1.0-0') }}</strong>
+      <span>ms réaction</span>
+    </div>
+  </section>
+
+  <section class="ladder">
+    <h3>Progression</h3>
+    <p class="muted small">Tous les niveaux sont accessibles ; le cadre jaune indique le niveau conseillé.</p>
+    @for (l of levels; track l.level) {
+      @let done = progress.validated(l.level);
+      <button class="rung" [class.done]="done" [class.current]="l.level === lvl.level" (click)="play(l.level)">
+        <span class="num">{{ done ? '✓' : l.level }}</span>
+        <span class="info">
+          <strong>{{ l.name }}</strong>
+          <span class="muted small">{{ l.goal }} · {{ l.config.execSec }} s d'exécution</span>
+        </span>
+        <span class="stars">
+          @for (on of starRow(l.level); track $index) {
+            <span [class.off]="!on">★</span>
+          }
+        </span>
+      </button>
+    }
+  </section>
+</div>

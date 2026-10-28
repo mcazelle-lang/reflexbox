@@ -1,0 +1,50 @@
+.meter {
+  position: relative;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--surface-2);
+  overflow: hidden;
+
+  .level {
+    height: 100%;
+    background: linear-gradient(90deg, var(--right), var(--accent), var(--left));
+  }
+
+  .threshold {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #fff;
+  }
+}
+
+.test {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hits {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.flash {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: flash 0.4s ease-out forwards;
+}
+
+@keyframes flash {
+  from { transform: scale(2); }
+  to { transform: scale(1); opacity: 0.4; }
+}
+
+.error { color: var(--left); margin: 0; }
+p { margin: 0; }

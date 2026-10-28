@@ -1,0 +1,35 @@
+<div class="page">
+  <header class="topbar">
+    <a class="back" routerLink="/" aria-label="Retour">←</a>
+    <h1>Légende</h1>
+  </header>
+
+  <section class="card rules">
+    <p><span class="swatch left"></span> <strong>Rouge</strong> = main gauche</p>
+    <p><span class="swatch right"></span> <strong>Vert</strong> = main droite</p>
+    <p><span class="swatch dodge"></span> <strong>Rond ambre</strong> = esquive</p>
+    <p><span class="swatch line"></span> <span><strong>Au-dessus de la ligne</strong> = tête, <strong>en dessous</strong> = corps, esquives <strong>sur la ligne</strong></span></p>
+    <p class="muted small">L'enchaînement se lit de gauche à droite.</p>
+  </section>
+
+  <h3>Coups</h3>
+  <section class="grid strikes">
+    @for (e of strikes; track e.label) {
+      <figure><div class="horizon slot"><app-move-card [move]="e.move" /></div><figcaption>{{ e.label }}</figcaption></figure>
+    }
+  </section>
+
+  <h3>Cible</h3>
+  <section class="grid targets">
+    @for (e of targets; track e.label) {
+      <figure><div class="horizon slot"><app-move-card [move]="e.move" /></div><figcaption>{{ e.label }}</figcaption></figure>
+    }
+  </section>
+
+  <h3>Esquives</h3>
+  <section class="grid dodges">
+    @for (e of dodges; track e.label) {
+      <figure><div class="horizon slot"><app-move-card [move]="e.move" /></div><figcaption>{{ e.label }}</figcaption></figure>
+    }
+  </section>
+</div>
