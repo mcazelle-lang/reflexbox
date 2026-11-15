@@ -1,0 +1,72 @@
+# Mixtapps (https://mixtapps.com) : compile l'app à chaque commit poussé sur main, puis publie le dossier
+# compilé (celui qui a une page index.html dans dist/, build/, out/ ou _site/) sur la branche mixtapps-build, que
+# Mixtapps sert. La compilation tourne ici, chez GitHub, sans droit d'écriture sur le dépôt ; seule la publication écrit
+# la branche mixtapps-build. Version de Node, commandes : à adapter si besoin.
+name: Mixtapps build
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: mixtapps-build
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Installer
+        run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Compiler
+        run: npm run build
+      - name: Trouver le dossier compilé
+        id: out
+        run: |
+          page=$(find . -name node_modules -prune -o -name .git -prune -o -name index.html -print \
+            | grep -E '/(dist|build|out|_site)/' | awk -F/ '{ print NF, $0 }' | sort -n | head -n 1 | cut -d' ' -f2-)
+          if [ -z "$page" ]; then
+            echo "::error::Aucune page index.html dans dist/, build/, out/ ou _site/ après la compilation."
+            exit 1
+          fi
+          echo "Dossier compilé : $(dirname "$page")"
+          echo "dir=$(dirname "$page")" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: ${{ steps.out.outputs.dir }}
+          include-hidden-files: true
+          retention-days: 1
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: site
+      - name: Publier sur la branche mixtapps-build
+        working-directory: site
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          git init -q -b mixtapps-build
+          git add -A
+          git -c user.name="Mixtapps build" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "Build $GITHUB_SHA"
+          git push -q --force "https://x-access-token:$TOKEN@github.com/$GITHUB_REPOSITORY.git" mixtapps-build
