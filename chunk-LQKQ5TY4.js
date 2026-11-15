@@ -1,0 +1,1 @@
+import{c as n,j as e}from"./chunk-XZKH2B4J.js";var t=class o{config=e(null);outcome=e(null);static \u0275fac=function(r){return new(r||o)};static \u0275prov=n({token:o,factory:o.\u0275fac,providedIn:"root"})};export{t as a};

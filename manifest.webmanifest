@@ -1,0 +1,11 @@
+{
+  "name": "Reflex Boxe",
+  "short_name": "Reflex Boxe",
+  "description": "Entraînement des réflexes en boxe anglaise",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#0e0f12",
+  "theme_color": "#0e0f12",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

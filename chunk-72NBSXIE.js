@@ -1,0 +1,1 @@
+import{a as e,j as o,k as c}from"./chunk-XZKH2B4J.js";var l="reflex-boxe:";function S(a,r){let i=r;try{let t=localStorage.getItem(l+a);t&&(i=e(e({},r),JSON.parse(t)))}catch{}let n=o(i);return c(()=>{let t=n();try{localStorage.setItem(l+a,JSON.stringify(t))}catch{}}),n}export{S as a};
